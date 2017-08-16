@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Video Player</string>
+
+    <string name="menuOptionMainRefresh">刷新</string>
+    <string name="menuOptionMainAbout">关于</string>
+    <string name="menuOptionMainExit">退出</string>
+</resources>
