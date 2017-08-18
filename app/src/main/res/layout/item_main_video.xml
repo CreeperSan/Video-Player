@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:padding="6dp"
+    android:clickable="true"
+    android:background="?attr/selectableItemBackground"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.CardView
+        android:layout_margin="4dp"
+        android:layout_width="120dp"
+        android:layout_height="90dp">
+        <ImageView
+            android:scaleType="centerCrop"
+            android:id="@+id/itemMainVideoPreview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+        <TextView
+            android:id="@+id/itemMainVideoDuration"
+            android:gravity="end"
+            tools:text="12:00"
+            android:textColor="#ffffff"
+            android:background="#99000000"
+            android:textSize="16sp"
+            android:padding="4dp"
+            android:layout_gravity="bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </android.support.v7.widget.CardView>
+
+    <LinearLayout
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/itemMainVideoTitle"
+            android:textColor="#333333"
+            android:textSize="16sp"
+            android:text="这个是标题"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/itemMainVideoInfo"
+            android:textSize="14sp"
+            android:text="1280*480"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/itemMainVideoCreateTime"
+            android:textSize="12sp"
+            android:text="2016年8月12日"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+</LinearLayout>

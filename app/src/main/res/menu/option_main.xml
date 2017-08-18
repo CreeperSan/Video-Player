@@ -5,11 +5,11 @@
         android:id="@+id/menuOptionMainRefresh"
         app:showAsAction="ifRoom"
         android:icon="@drawable/ic_refresh_black_24dp"
-        android:name="@string/menuOptionMainRefresh"/>
+        android:title="@string/menuOptionMainRefresh"/>
     <item
         android:id="@+id/menuOptionMainAbout"
-        android:name="@string/menuOptionMainAbout"/>
+        android:title="@string/menuOptionMainAbout"/>
     <item
         android:id="@+id/menuOptionMainExit"
-        android:name="@string/menuOptionMainExit"/>
+        android:title="@string/menuOptionMainExit"/>
 </menu>
