@@ -66,6 +66,10 @@ class PlayActivity : BaseActivity(), SurfaceHolder.Callback, MediaPlayer.OnCompl
         super.onDestroy()
         timeRefreshThread.close()
     }
+    override fun onStop() {
+        super.onStop()
+        pauseVideo()
+    }
 
 
     private fun initIntent() {
