@@ -19,9 +19,9 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".PlayActivity" android:theme="@style/Theme.AppCompat.NoActionBar"/>
+        <activity android:name=".PlayActivity" android:screenOrientation="sensorPortrait" android:theme="@style/Theme.AppCompat.NoActionBar"/>
 
-        <service android:name="creepersan.videoplayer.Service.ManageService"/>
+        <service android:name="creepersan.videoplayer.Service.MediaPlayerService"/>
 
     </application>
 

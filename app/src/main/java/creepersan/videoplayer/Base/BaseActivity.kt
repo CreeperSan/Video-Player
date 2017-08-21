@@ -49,6 +49,7 @@ abstract class BaseActivity : AppCompatActivity(){
     protected fun logW(content:String) = Log.w(TAG,content)
     protected fun logE(content:String) = Log.e(TAG,content)
 
+    protected fun toast(resID:Int) = Toast.makeText(this,getString(resID),Toast.LENGTH_SHORT).show()
     protected fun toast(content: String) = Toast.makeText(this,content,Toast.LENGTH_SHORT).show()
     protected fun toastLong(content:String) = Toast.makeText(this,content,Toast.LENGTH_LONG).show()
 

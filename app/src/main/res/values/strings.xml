@@ -9,4 +9,6 @@
     <string name="mainUnknownVideoDuration">未知长度</string>
 
     <string name="playVideoNotExist">视频文件不存在，请检查路径是否正确。</string>
+    <string name="playErrorAndPlayNext">播放文件出错，为你播放下一个</string>
+    <string name="playError">播放文件出错，请检查文件是否损坏</string>
 </resources>

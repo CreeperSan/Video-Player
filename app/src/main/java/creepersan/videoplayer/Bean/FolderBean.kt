@@ -1,6 +1,8 @@
 package creepersan.videoplayer.Bean
 
-class FolderBean(var folderName:String,var folderPath:String){
+import java.io.Serializable
+
+class FolderBean(var folderName:String,var folderPath:String):Serializable{
     var videoList = ArrayList<VideoBean>()
 
 }

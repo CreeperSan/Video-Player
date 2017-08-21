@@ -1,12 +1,14 @@
 package creepersan.videoplayer.Activity
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.media.ThumbnailUtils
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v7.app.ActionBar
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.LruCache
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -20,7 +22,6 @@ import creepersan.videoplayer.Helper.ContentResolverHelper
 import creepersan.videoplayer.Helper.IntentHelper
 import creepersan.videoplayer.Helper.TimeHelper
 import kotlinx.android.synthetic.main.activity_main.*
-import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -30,6 +31,15 @@ class MainActivity : BaseActivity() {
     private lateinit var folderAdapter:FolderAdapter
     private lateinit var videoAdapter:VideoAdapter
     private lateinit var actionBar: ActionBar
+
+
+    private val bitmapLruCache = object : LruCache<String,Bitmap>((Runtime.getRuntime().maxMemory()/4).toInt()){
+        override fun entryRemoved(evicted: Boolean, key: String?, oldValue: Bitmap?, newValue: Bitmap?) {
+            super.entryRemoved(evicted, key, oldValue, newValue)
+            if(oldValue!=null)
+                oldValue.recycle()
+        }
+    }
 
     override fun getLayoutID(): Int = R.layout.activity_main
 
@@ -138,7 +148,7 @@ class MainActivity : BaseActivity() {
         }
         fun playVideo(videoBean: VideoBean){
             val intent = Intent(this@MainActivity,PlayActivity::class.java)
-            IntentHelper.makePlayIntent(intent,videoBean.videoPath,videoBean)
+            IntentHelper.makePlayIntent(intent,videoBean.videoPath,videoBean.name,videoBean,folderBean)
             startActivity(intent)
         }
         fun makeOptionDialog(videoBean: VideoBean){
@@ -159,7 +169,8 @@ class MainActivity : BaseActivity() {
             holder.info.text = videoBean.folderName
             holder.createTime.text = videoBean.videoPath
             //获取图片
-            holder.preview.setImageBitmap(ThumbnailUtils.createVideoThumbnail(videoBean.videoPath,MediaStore.Video.Thumbnails.MINI_KIND))
+            holder.preview.setImageResource(R.drawable.ic_local_movies_black_24dp)
+            holder.loadImage(videoBean.videoPath)
             holder.itemView.setOnClickListener {
                 playVideo(videoBean)
             }
@@ -188,5 +199,41 @@ class MainActivity : BaseActivity() {
         var title = itemView.findViewById<TextView>(R.id.itemMainVideoTitle)
         var info = itemView.findViewById<TextView>(R.id.itemMainVideoInfo)
         var createTime = itemView.findViewById<TextView>(R.id.itemMainVideoCreateTime)
+
+        val imageLoadThread = ImageLoaderThread()
+
+        fun loadImage(path:String){
+            if (bitmapLruCache.get(path)!=null){
+                preview.setImageBitmap(bitmapLruCache.get(path))
+            }else{
+                imageLoadThread.setPath(path)
+            }
+        }
+
+        inner class ImageLoaderThread:Thread(){
+            private var path:String = ""
+
+            fun close(){
+                interrupt()
+            }
+            fun setPath(path: String){
+                this.path = path
+                start()
+            }
+
+            override fun run() {
+                super.run()
+                val bitmap = ThumbnailUtils.createVideoThumbnail(path,MediaStore.Video.Thumbnails.MINI_KIND)
+                runOnUiThread{
+                    if (bitmap!=null){
+                        bitmapLruCache.put(path,bitmap)
+                        this@VideoHolder.preview.setImageBitmap(bitmap)
+                    }else{
+                        this@VideoHolder.preview.setImageResource(R.drawable.ic_error_outline_black_24dp)
+                    }
+                }
+            }
+        }
     }
+
 }
