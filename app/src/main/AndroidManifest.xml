@@ -3,6 +3,7 @@
     package="creepersan.videoplayer.Activity">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.BATTERY_STATS"/>
 
     <application
         android:allowBackup="true"

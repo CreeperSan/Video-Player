@@ -20,26 +20,35 @@
 
     <!-- 常亮显示区 -->
     <RelativeLayout
-        android:visibility="gone"
         android:id="@+id/playAlwaysOnZone"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <TextView
+            android:textSize="12sp"
+            android:gravity="center"
+            android:visibility="gone"
             android:id="@+id/playAlwaysOnProgress"
             android:alpha="0.5"
             android:background="#000000"
             android:textColor="#ffffff"
-            android:text="00:02/12:56"
+            android:text="@string/playAlwaysOnProgressDefaultText"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
+            android:textSize="12sp"
+            android:gravity="center"
+            android:visibility="gone"
             android:id="@+id/playAlwaysOnInfo"
             android:alpha="0.5"
             android:background="#000000"
             android:textColor="#ffffff"
-            android:text="100% 下午3:52"
+            android:text="@string/playAlwaysOnInfoDefaultText"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:layout_width="wrap_content"
