@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/prefCatalogDisplay">
+        <CheckBoxPreference
+            android:title="@string/prefCatalogDisplayAlwaysOnInfoTitle"
+            android:defaultValue="false"
+            android:summary="@string/prefCatalogDisplayAlwaysOnInfoSummary"
+            android:key="prefCatalogDisplayAlwaysOnInfo"/>
+        <CheckBoxPreference
+            android:title="@string/prefCatalogDisplayAlwaysOnProgressTitle"
+            android:defaultValue="false"
+            android:summary="@string/prefCatalogDisplayAlwaysOnProgressSummary"
+            android:key="prefCatalogDisplayAlwaysOnProgress"/>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/prefCatalogGesture">
+        <CheckBoxPreference
+            android:title="@string/prefCatalogGestureDoubleTapPlayOrPauseTitle"
+            android:summary="@string/prefCatalogGestureDoubleTapPlayOrPauseSummary"
+            android:defaultValue="true"
+            android:key="prefCatalogGestureDoubleTapPlayOrResume"/>
+        <CheckBoxPreference
+            android:title="@string/prefCatalogGestureProgressTitle"
+            android:summary="@string/prefCatalogGestureProgressSummary"
+            android:defaultValue="true"
+            android:key="prefCatalogGestureProgress"/>
+        <CheckBoxPreference
+            android:title="@string/prefCatalogGestureVolumeTitle"
+            android:summary="@string/prefCatalogGestureVolumeSummary"
+            android:defaultValue="true"
+            android:key="prefCatalogGestureVolume"/>
+        <CheckBoxPreference
+            android:title="@string/prefCatalogGestureBrightnessTitle"
+            android:summary="@string/prefCatalogGestureBrightnessSummary"
+            android:defaultValue="true"
+            android:key="prefCatalogGestureBrightness"/>
+    </PreferenceCategory>
+</PreferenceScreen>

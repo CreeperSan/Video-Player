@@ -84,8 +84,13 @@ class MainActivity : BaseActivity() {
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
+            R.id.menuOptionMainSetting -> {
+                startActivity(SettingActivity::class.java)
+            }
             R.id.menuOptionMainRefresh -> {
-
+                mainRefreshLayout.isRefreshing = true
+                initList()
+                initData()
             }
             R.id.menuOptionMainAbout -> {
 
@@ -127,6 +132,7 @@ class MainActivity : BaseActivity() {
             holder.content.text = "${folderList[position].videoList.size} ${getString(R.string.mainVideos)}"
             holder.itemView.setOnClickListener {
                 isHome = false;
+                title = folderList[position].folderName
                 videoAdapter = VideoAdapter(folderList[position])
                 mainRecyclerView.adapter = videoAdapter
                 videoAdapter.notifyDataSetChanged()

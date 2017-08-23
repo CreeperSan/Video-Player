@@ -4,8 +4,11 @@
     <item
         android:id="@+id/menuOptionMainRefresh"
         app:showAsAction="ifRoom"
-        android:icon="@drawable/ic_refresh_black_24dp"
+        android:icon="@drawable/ic_refresh_white_24dp"
         android:title="@string/menuOptionMainRefresh"/>
+    <item
+        android:id="@+id/menuOptionMainSetting"
+        android:title="@string/menuOptionMainSetting"/>
     <item
         android:id="@+id/menuOptionMainAbout"
         android:title="@string/menuOptionMainAbout"/>

@@ -14,13 +14,14 @@
         android:theme="@style/AppTheme">
 
 
-        <activity android:name=".MainActivity" android:screenOrientation="portrait">
+        <activity android:name=".MainActivity" android:screenOrientation="sensorPortrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity android:name=".PlayActivity" android:screenOrientation="sensorPortrait" android:theme="@style/Theme.AppCompat.NoActionBar"/>
+        <activity android:name=".SettingActivity" android:screenOrientation="sensorPortrait"/>
 
         <service android:name="creepersan.videoplayer.Service.MediaPlayerService"/>
 

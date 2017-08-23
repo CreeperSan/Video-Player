@@ -2,8 +2,11 @@
     <string name="app_name">Video Player</string>
 
     <string name="menuOptionMainRefresh">刷新</string>
+    <string name="menuOptionMainSetting">设置</string>
     <string name="menuOptionMainAbout">关于</string>
     <string name="menuOptionMainExit">退出</string>
+    <string name="menuOptionPlaySetting">设置</string>
+    <string name="menuOptionPlayVideoInfo">视频信息</string>
 
     <string name="mainVideos">视频</string>
     <string name="mainUnknownVideoDuration">未知长度</string>
@@ -13,4 +16,25 @@
     <string name="playVideoNotExist">视频文件不存在，请检查路径是否正确。</string>
     <string name="playErrorAndPlayNext">播放文件出错，为你播放下一个</string>
     <string name="playError">播放文件出错，请检查文件是否损坏</string>
+    <string name="playDialogDefaultPositiveText">确定</string>
+
+    <string name="dialogPlayError">播放失败</string>
+    <string name="dialogVideoNotExist">视频文件不存在</string>
+
+    <string name="prefCatalogDisplay">显示设置</string>
+    <string name="prefCatalogDisplayAlwaysOnInfoTitle">手机信息常亮显示</string>
+    <string name="prefCatalogDisplayAlwaysOnInfoSummary">屏幕右上角常亮显示当前时间和手机电量</string>
+    <string name="prefCatalogDisplayAlwaysOnProgressTitle">视频进度常亮显示</string>
+    <string name="prefCatalogDisplayAlwaysOnProgressSummary">屏幕左上角常亮显示当前视频进度</string>
+    <string name="prefCatalogGesture">手势设置</string>
+    <string name="prefCatalogGestureVolumeTitle">音量手势调节</string>
+    <string name="prefCatalogGestureVolumeSummary">在屏幕的右边纵向滑动调节音量</string>
+    <string name="prefCatalogGestureBrightnessTitle">亮度手势调节</string>
+    <string name="prefCatalogGestureBrightnessSummary">在屏幕的左边总想华东调节屏幕亮度</string>
+    <string name="prefCatalogGestureProgressTitle">进度手势调节</string>
+    <string name="prefCatalogGestureProgressSummary">屏幕任意位置横向滑动调节视频进度</string>
+    <string name="prefCatalogGestureDoubleTapPlayOrPauseTitle">双击屏幕手势</string>
+    <string name="prefCatalogGestureDoubleTapPlayOrPauseSummary">快速轻触屏幕2下播放/暂停</string>
+
+    <string name="settingTitle">设置</string>
 </resources>

@@ -2,4 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:title="Hello"
         android:id="@+id/menuOptionPlayTest"/>
+    <item android:title="@string/menuOptionPlaySetting"
+        android:icon="@drawable/ic_settings_white_24dp"
+        android:id="@+id/menuOptionPlaySetting"/>
+    <item android:title="@string/menuOptionPlayVideoInfo"
+        android:id="@+id/menuOptionPlayVideoInfo"/>
 </menu>

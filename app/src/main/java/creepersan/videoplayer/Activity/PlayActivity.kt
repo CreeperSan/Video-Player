@@ -5,35 +5,31 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ActivityInfo
-import android.graphics.drawable.Drawable
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.BatteryManager
 import android.os.Bundle
 import android.provider.Settings
 import android.support.v7.app.ActionBar
+import android.support.v7.app.AlertDialog
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ImageSpan
 import android.text.style.RelativeSizeSpan
-import android.util.Log
 import android.view.*
 import android.widget.SeekBar
 import creepersan.videoplayer.Base.BaseActivity
 import creepersan.videoplayer.Bean.FolderBean
 import creepersan.videoplayer.Event.*
-import creepersan.videoplayer.Helper.IntentHelper
-import creepersan.videoplayer.Helper.IntentKey
-import creepersan.videoplayer.Helper.PlayIntentInfo
-import creepersan.videoplayer.Helper.TimeHelper
+import creepersan.videoplayer.Helper.*
 import kotlinx.android.synthetic.main.activity_play.*
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.io.File
 
 
 class PlayActivity : BaseActivity(), SurfaceHolder.Callback, MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener, MediaPlayer.OnInfoListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnVideoSizeChangedListener, View.OnTouchListener, SeekBar.OnSeekBarChangeListener {
     object FLAG{
-        val IS_ROTATE_SCREEN = "IsScreenRotate"
         val CURRENT_POS = "CurrentPos"
         val IS_FORCE_ROTATE = "isForceRotate"
     }
@@ -41,8 +37,12 @@ class PlayActivity : BaseActivity(), SurfaceHolder.Callback, MediaPlayer.OnCompl
     private var videoPath = ""
     private var videoName = ""
 
-    private var isAlwaysOnProgress = true
-    private var isAlwaysOnInfo = true
+    private var isAlwaysOnProgress = true           //设置的标志位
+    private var isAlwaysOnInfo = true               //设置的标志位
+    private var isDoubleTapGesture = true          //设置的标志位
+    private var isProgressGesture = true            //设置的标志位
+    private var isBrightnessGesture = true          //设置的标志位
+    private var isVolumeGesture = true              //设置的标志位
     private var isLockScreen = false
     private var isShowControl = false
     private var isTapVideo = true
@@ -58,8 +58,8 @@ class PlayActivity : BaseActivity(), SurfaceHolder.Callback, MediaPlayer.OnCompl
     private var isPlayerReady = false
     private var isRegisterReceiver = false
 
-    private var touchPosX = 0f
-    private var touchPosY = 0f
+    private var saveTouchPosX = 0f
+    private var saveTouchPosY = 0f
     private val adjustThresholdXAxis = 40f
     private var adjustThresholdYAxis = 120f
     private var saveMediaPlayerTime = 0
@@ -67,13 +67,14 @@ class PlayActivity : BaseActivity(), SurfaceHolder.Callback, MediaPlayer.OnCompl
     private var saveBrightnessLevel = -1
     private var saveVolumeLevel = 0
     private var saveCurrentPosition = -1
-    private var saveCurrentTimeStamp = -1L
     private var newMediaPlayerTime = 0L
     private var volumeMax = 0
     private var brightnessMax = 255f
     private var newBrightness = 0
     private var retryCount = 0
     private val retryCountMax = 3
+    private var saveTapTimeStamp = 0L
+    private val doubleTapTimeSnap = 300
 
     private val spannableStrCenterSmall = RelativeSizeSpan(0.5f)
     private val timeRefreshThread = ProgressBarRefreshThread()
@@ -85,13 +86,6 @@ class PlayActivity : BaseActivity(), SurfaceHolder.Callback, MediaPlayer.OnCompl
 
     override fun getLayoutID(): Int = R.layout.activity_play
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        initIntent()
-        initFlag(savedInstanceState)  //处理关键标志位
-        initRotate()
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         try {
@@ -101,6 +95,20 @@ class PlayActivity : BaseActivity(), SurfaceHolder.Callback, MediaPlayer.OnCompl
         outState.putBoolean(FLAG.IS_FORCE_ROTATE,isForceRotate)
         isExit = false
     }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        initKeepScreenAwake()           //保持屏幕常亮
+        initIntent()
+        initFlag(savedInstanceState)    //处理关键标志位
+        initSetting()                   //处理设置的配置
+        if (!initFileIsExist()){
+            showDialogSimple(R.string.dialogPlayError,R.string.dialogVideoNotExist)
+            return
+        }
+        initRotate()
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()
@@ -139,14 +147,23 @@ class PlayActivity : BaseActivity(), SurfaceHolder.Callback, MediaPlayer.OnCompl
         initProgressBar(mediaPlayer.currentPosition,mediaPlayer.duration)
         initAlwaysOn()
     }
-
-
-
+    private fun initKeepScreenAwake() {
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    }
+    private fun initFileIsExist():Boolean = File(videoPath).exists()
     private fun initFlag(bundle: Bundle?) {
         if (bundle!=null){
             saveCurrentPosition = bundle.getInt(FLAG.CURRENT_POS,-1)
             isForceRotate = bundle.getBoolean(FLAG.IS_FORCE_ROTATE,false)
         }
+    }
+    private fun initSetting() {
+        isAlwaysOnInfo = PrefHelper.getAlwaysOnInfoStatus(this)
+        isAlwaysOnProgress = PrefHelper.getAlwaysOnProgressStatus(this)
+        isDoubleTapGesture = PrefHelper.getGestureDoubleTapStatus(this)
+        isProgressGesture = PrefHelper.getGestureProgressStatus(this)
+        isVolumeGesture = PrefHelper.getGestureVolumeStatus(this)
+        isBrightnessGesture = PrefHelper.getGestureBrightnessStatus(this)
     }
     private fun initRotate() {
         if (isForceRotate){
@@ -362,6 +379,7 @@ class PlayActivity : BaseActivity(), SurfaceHolder.Callback, MediaPlayer.OnCompl
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             android.R.id.home -> finish()
+            R.id.menuOptionPlaySetting -> startActivity(SettingActivity::class.java)
         }
         return super.onOptionsItemSelected(item)
     }
@@ -413,6 +431,13 @@ class PlayActivity : BaseActivity(), SurfaceHolder.Callback, MediaPlayer.OnCompl
                         // bar
                         or View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
                         or View.SYSTEM_UI_FLAG_IMMERSIVE)
+    }
+    private fun showDialogSimple(titleResId:Int,contentResId:Int){
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(getString(titleResId))
+        builder.setMessage(getString(contentResId))
+        builder.setPositiveButton(R.string.playDialogDefaultPositiveText,null)
+        builder.show()
     }
 
     /**
@@ -664,6 +689,13 @@ class PlayActivity : BaseActivity(), SurfaceHolder.Callback, MediaPlayer.OnCompl
                             showUnlockZoneVisibility(View.GONE)
                         }
                     }else{//如果没锁屏
+                        if (isDoubleTapGesture and isPlayerReady){
+                            val currentTimeStamp = System.currentTimeMillis()
+                            if (currentTimeStamp - saveTapTimeStamp < doubleTapTimeSnap){
+                                playOrResume()
+                            }
+                            saveTapTimeStamp = currentTimeStamp
+                        }
                         if (isShowControl){
                             showPlayerControlUIVisibility(View.VISIBLE)
                         }else{
@@ -703,20 +735,23 @@ class PlayActivity : BaseActivity(), SurfaceHolder.Callback, MediaPlayer.OnCompl
             }
             MotionEvent.ACTION_MOVE->{  //如果是移动
                 if(isLockScreen)return true
-                val currentX = motionEvent.x
+                var currentX = motionEvent.x
                 val currentY = motionEvent.y
                 //判断是否为移动
+                if (!isProgressGesture){
+                    currentX = saveTouchPosX
+                }//为适配进度手势设置
                 if (!(isTouchSeekingX or isTouchSeekingYLeft or isTouchSeekingYRight)){//还没确定是移动
-                    if (Math.abs(currentX - touchPosX) > adjustThresholdXAxis){
+                    if (Math.abs(currentX - saveTouchPosX) > adjustThresholdXAxis){
                         isTapVideo = false
                         isTouchSeekingX = true
                         if (!isShowControl){
                             playProgressZone.visibility = View.VISIBLE
                             isFastPreviewProgress = true
                         }
-                    }else if (Math.abs(currentY - touchPosY) > adjustThresholdXAxis){
+                    }else if (Math.abs(currentY - saveTouchPosY) > adjustThresholdXAxis){
                         isTapVideo = false
-                        if (currentX < playTouchZone.width/2){
+                        if ( ((currentX < playTouchZone.width/2) or !isVolumeGesture ) and isBrightnessGesture ){
                             showVerticalControlUIVisibility(View.VISIBLE)
                             showVerticalControlIcon(R.drawable.ic_brightness_high_black_24dp)
                             playVerticalSlideInfoProgressBar.setProgressMax(brightnessMax.toInt())
@@ -724,7 +759,7 @@ class PlayActivity : BaseActivity(), SurfaceHolder.Callback, MediaPlayer.OnCompl
                             if (saveBrightnessLevel<0){
                                 saveBrightnessLevel = getScreenBrightness()
                             }
-                        }else{
+                        }else if ( ((currentX >= playTouchZone.width/2) or !isBrightnessGesture ) and isVolumeGesture ){
                             showVerticalControlUIVisibility(View.VISIBLE)
                             showVerticalControlIcon(R.drawable.ic_volume_up_black_24dp)
                             playVerticalSlideInfoProgressBar.setProgressMax(volumeMax)
@@ -736,7 +771,7 @@ class PlayActivity : BaseActivity(), SurfaceHolder.Callback, MediaPlayer.OnCompl
                     val screenHeight = playTouchZone.height.toFloat()
                     if (isTouchSeekingX){//是X轴的移动的话
                         val screenWidth = playTouchZone.width.toFloat()
-                        val currentXPercent = (currentX - touchPosX)/screenWidth
+                        val currentXPercent = (currentX - saveTouchPosX)/screenWidth
                         if(mediaPlayer.isPlaying){
                             mediaPlayer.pause()
                             playButtonPlay.setImageResource(R.drawable.ic_pause_black_24dp)
@@ -762,10 +797,10 @@ class PlayActivity : BaseActivity(), SurfaceHolder.Callback, MediaPlayer.OnCompl
                             mediaPlayer.seekTo((newMediaPlayerTime-1).toInt())
                         }
                     }else{
-                        val isRaise = !(currentY > touchPosY)
+                        val isRaise = !(currentY > saveTouchPosY)
                         if (isTouchSeekingYLeft){
                             adjustThresholdYAxis = screenHeight / brightnessMax
-                            val times = (Math.abs(touchPosY - currentY)/adjustThresholdYAxis).toInt()
+                            val times = (Math.abs(saveTouchPosY - currentY)/adjustThresholdYAxis).toInt()
                             if (isRaise){
                                 newBrightness = saveBrightnessLevel + times
                             }else{
@@ -781,7 +816,7 @@ class PlayActivity : BaseActivity(), SurfaceHolder.Callback, MediaPlayer.OnCompl
                         }
                         if (isTouchSeekingYRight){
                             adjustThresholdYAxis = screenHeight / volumeMax
-                            val times = (Math.abs(touchPosY - currentY)/adjustThresholdYAxis).toInt()
+                            val times = (Math.abs(saveTouchPosY - currentY)/adjustThresholdYAxis).toInt()
                             if(isRaise){
                                 setVolume(saveVolumeLevel + times)
                             }else{
@@ -794,8 +829,8 @@ class PlayActivity : BaseActivity(), SurfaceHolder.Callback, MediaPlayer.OnCompl
             }
             MotionEvent.ACTION_DOWN->{  //如果是按下
                 if(isLockScreen)return true
-                touchPosX = motionEvent.x
-                touchPosY = motionEvent.y
+                saveTouchPosX = motionEvent.x
+                saveTouchPosY = motionEvent.y
                 saveMediaPlayerTime = mediaPlayer.currentPosition
                 saveMediaPlayerState = mediaPlayer.isPlaying
             }
@@ -806,7 +841,7 @@ class PlayActivity : BaseActivity(), SurfaceHolder.Callback, MediaPlayer.OnCompl
     /**
      *      EventBus
      */
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN)//内部进度检测 Event
     fun onViewProgressEvent(event: MediaProgressResultEvent) {
         if(!isPlayerReady){
             return
@@ -825,6 +860,30 @@ class PlayActivity : BaseActivity(), SurfaceHolder.Callback, MediaPlayer.OnCompl
                 playAlwaysOnProgress.text = getString(R.string.playAlwaysOnProgressDefaultText)
             }
         }
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onSettingAlwaysOnInfoEvent(event:SettingAlwaysOnInfoEvent){
+        isAlwaysOnInfo
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onSettingAlwaysOnProgressEvent(event:SettingAlwaysOnProgressEvent){
+
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onSettingGestureDoubleTapEvent(event:SettingGestureDoubleTapEvent){
+
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onSettingGestureProgressEvent(event:SettingGestureProgressEvent){
+
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onSettingGestureVolumeEvent(event:SettingGestureVolumeEvent){
+
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onSettingGestureBrightnessEvent(event:SettingGestureBrightnessEvent){
+
     }
 
 
@@ -855,11 +914,30 @@ class PlayActivity : BaseActivity(), SurfaceHolder.Callback, MediaPlayer.OnCompl
     inner class BatteryInfoReceiver : BroadcastReceiver(){
         override fun onReceive(p0: Context?, intent: Intent) {
             val batteryLevel = intent.getIntExtra("level",0)
-//            val batteryScale = intent.getIntExtra("scale",0)
             val batteryStatus = intent.getIntExtra("status",BatteryManager.BATTERY_STATUS_UNKNOWN)
             val timeStr = TimeHelper.getTimeStr(System.currentTimeMillis(),this@PlayActivity)
             val spannableString = SpannableString("${timeStr}  ${batteryLevel}%  ")
-            val imageSpan = ImageSpan(this@PlayActivity,R.drawable.ic_battery_charging_full_black_24dp)
+            var batteryIconID = R.drawable.ic_battery_charging_full_black_24dp
+            if (batteryLevel < 20){
+                batteryIconID = R.drawable.ic_battery_alert_white_14dp
+            }else if (batteryLevel < 30){
+                batteryIconID = R.drawable.ic_battery_20_white_14dp
+            }else if (batteryLevel < 50){
+                batteryIconID = R.drawable.ic_battery_30_white_14dp
+            }else if (batteryLevel < 60){
+                batteryIconID = R.drawable.ic_battery_50_white_14dp
+            }else if (batteryLevel < 80){
+                batteryIconID = R.drawable.ic_battery_60_white_14dp
+            }else if (batteryLevel < 90){
+                batteryIconID = R.drawable.ic_battery_80_white_14dp
+            }else if (batteryLevel < 100){
+                batteryIconID = R.drawable.ic_battery_90_white_14dp
+            }else if ((batteryStatus!=BatteryManager.BATTERY_STATUS_FULL) and (batteryLevel==100)){
+                batteryIconID = R.drawable.ic_battery_full_white_14dp
+            }else if (batteryStatus == BatteryManager.BATTERY_STATUS_UNKNOWN){
+                batteryIconID = R.drawable.ic_battery_unknown_white_14dp
+            }
+            val imageSpan = ImageSpan(this@PlayActivity,batteryIconID)
             spannableString.setSpan(imageSpan,spannableString.length-1,spannableString.length,Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
             playAlwaysOnInfo.text = spannableString
         }
