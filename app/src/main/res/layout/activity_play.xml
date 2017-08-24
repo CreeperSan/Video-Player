@@ -125,13 +125,6 @@
             android:layout_height="64dp" />
     </android.support.v7.widget.CardView>
 
-    <!-- 额外操作栏 -->
-    <RelativeLayout
-        android:id="@+id/playExtraZone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-    </RelativeLayout>
     <!-- 底栏 -->
     <LinearLayout
         android:background="#99000000"
@@ -224,10 +217,10 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent" />
             <ImageView
-                android:id="@+id/playButtonFullscreen"
-                android:padding="6dp"
+                android:id="@+id/playButtonRotate"
+                android:padding="12dp"
                 android:tint="#ffffff"
-                android:src="@drawable/ic_fullscreen_black_24dp"
+                android:src="@drawable/ic_screen_rotation_black_24dp"
                 android:background="?attr/selectableItemBackground"
                 android:clickable="true"
                 android:layout_weight="1"

@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
 import butterknife.ButterKnife
+import creepersan.videoplayer.Helper.CommandHelper
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -28,7 +29,11 @@ abstract class BaseActivity : AppCompatActivity(){
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onCommandEvent(command:String){}
+    fun onCommandEvent(command:String){
+        if (command == CommandHelper.COMMAND_EXIT){
+            finish()
+        }
+    }
 
     abstract protected fun getLayoutID():Int;
 

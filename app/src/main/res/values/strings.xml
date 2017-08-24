@@ -1,40 +1,51 @@
 <resources>
     <string name="app_name">Video Player</string>
 
-    <string name="menuOptionMainRefresh">刷新</string>
-    <string name="menuOptionMainSetting">设置</string>
-    <string name="menuOptionMainAbout">关于</string>
-    <string name="menuOptionMainExit">退出</string>
-    <string name="menuOptionPlaySetting">设置</string>
-    <string name="menuOptionPlayVideoInfo">视频信息</string>
+    <string name="menuOptionMainRefresh">Refresh</string>
+    <string name="menuOptionMainSetting">Setting</string>
+    <string name="menuOptionMainAbout">About</string>
+    <string name="menuOptionMainExit">Exit</string>
+    <string name="menuOptionPlaySetting">Setting</string>
+    <string name="menuOptionPlayVideoInfo">Video Information</string>
 
-    <string name="mainVideos">视频</string>
-    <string name="mainUnknownVideoDuration">未知长度</string>
+    <string name="mainVideos">Video</string>
+    <string name="mainUnknownVideoDuration">Unknown Duration</string>
 
     <string name="playAlwaysOnProgressDefaultText">00:00 / 00:00</string>
     <string name="playAlwaysOnInfoDefaultText">00:00 100%</string>
-    <string name="playVideoNotExist">视频文件不存在，请检查路径是否正确。</string>
-    <string name="playErrorAndPlayNext">播放文件出错，为你播放下一个</string>
-    <string name="playError">播放文件出错，请检查文件是否损坏</string>
-    <string name="playDialogDefaultPositiveText">确定</string>
+    <string name="playVideoNotExist">Video not exist,please check the video\'s path.</string>
+    <string name="playErrorAndPlayNext">Error occur,playing next video</string>
+    <string name="playError">Error occur,please check the video</string>
+    <string name="playDialogDefaultPositiveText">OK</string>
+    <string name="playDialogVideoName">Name</string>
+    <string name="playDialogVideoPath">Path</string>
+    <string name="playDialogVideoDuration">Duration</string>
+    <string name="playDialogVideoWidth">Width</string>
+    <string name="playDialogVideoHeight">Height</string>
+    <string name="playDialogVideoSize">Size</string>
+    <string name="playDialogPlayerNotReady">Player not ready,please try again</string>
 
-    <string name="dialogPlayError">播放失败</string>
-    <string name="dialogVideoNotExist">视频文件不存在</string>
+    <string name="dialogPlayError">Play failed</string>
+    <string name="dialogVideoNotExist">Video not exist</string>
 
-    <string name="prefCatalogDisplay">显示设置</string>
-    <string name="prefCatalogDisplayAlwaysOnInfoTitle">手机信息常亮显示</string>
-    <string name="prefCatalogDisplayAlwaysOnInfoSummary">屏幕右上角常亮显示当前时间和手机电量</string>
-    <string name="prefCatalogDisplayAlwaysOnProgressTitle">视频进度常亮显示</string>
-    <string name="prefCatalogDisplayAlwaysOnProgressSummary">屏幕左上角常亮显示当前视频进度</string>
-    <string name="prefCatalogGesture">手势设置</string>
-    <string name="prefCatalogGestureVolumeTitle">音量手势调节</string>
-    <string name="prefCatalogGestureVolumeSummary">在屏幕的右边纵向滑动调节音量</string>
-    <string name="prefCatalogGestureBrightnessTitle">亮度手势调节</string>
-    <string name="prefCatalogGestureBrightnessSummary">在屏幕的左边总想华东调节屏幕亮度</string>
-    <string name="prefCatalogGestureProgressTitle">进度手势调节</string>
-    <string name="prefCatalogGestureProgressSummary">屏幕任意位置横向滑动调节视频进度</string>
-    <string name="prefCatalogGestureDoubleTapPlayOrPauseTitle">双击屏幕手势</string>
-    <string name="prefCatalogGestureDoubleTapPlayOrPauseSummary">快速轻触屏幕2下播放/暂停</string>
+    <string name="prefCatalogDisplay">Display Setting</string>
+    <string name="prefCatalogDisplayAlwaysOnInfoTitle">Always show device information</string>
+    <string name="prefCatalogDisplayAlwaysOnInfoSummary">Show current time and battery on the top right of the screen</string>
+    <string name="prefCatalogDisplayAlwaysOnProgressTitle">Always show video progress information</string>
+    <string name="prefCatalogDisplayAlwaysOnProgressSummary">Show video progress on the top left of the screen</string>
+    <string name="prefCatalogGesture">Gesture Setting</string>
+    <string name="prefCatalogGestureVolumeTitle">Volume gesture</string>
+    <string name="prefCatalogGestureVolumeSummary">Vertically scroll right side of screen to adjust volume</string>
+    <string name="prefCatalogGestureBrightnessTitle">Brightness Gesture</string>
+    <string name="prefCatalogGestureBrightnessSummary">Vertically scroll left side of screen to adjust brightness</string>
+    <string name="prefCatalogGestureProgressTitle">Progress gesture</string>
+    <string name="prefCatalogGestureProgressSummary">Horizontally scroll the screen to adjust the video progress</string>
+    <string name="prefCatalogGestureDoubleTapPlayOrPauseTitle">Double tap gesture</string>
+    <string name="prefCatalogGestureDoubleTapPlayOrPauseSummary">Double tap the screen to pause / play</string>
 
-    <string name="settingTitle">设置</string>
+    <string name="settingTitle">Setting</string>
+
+    <string name="aboutTitle">About</string>
+    <string name="aboutVersion">Version</string>
+    <string name="aboutUnknownVersion">Unknow Version</string>
 </resources>

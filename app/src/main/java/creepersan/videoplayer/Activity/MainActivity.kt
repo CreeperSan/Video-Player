@@ -18,10 +18,9 @@ import android.widget.TextView
 import creepersan.videoplayer.Base.BaseActivity
 import creepersan.videoplayer.Bean.FolderBean
 import creepersan.videoplayer.Bean.VideoBean
-import creepersan.videoplayer.Helper.ContentResolverHelper
-import creepersan.videoplayer.Helper.IntentHelper
-import creepersan.videoplayer.Helper.TimeHelper
+import creepersan.videoplayer.Helper.*
 import kotlinx.android.synthetic.main.activity_main.*
+import java.math.BigDecimal
 import java.util.*
 
 
@@ -87,16 +86,11 @@ class MainActivity : BaseActivity() {
             R.id.menuOptionMainSetting -> {
                 startActivity(SettingActivity::class.java)
             }
-            R.id.menuOptionMainRefresh -> {
-                mainRefreshLayout.isRefreshing = true
-                initList()
-                initData()
-            }
             R.id.menuOptionMainAbout -> {
-
+                startActivity(AboutActivity::class.java)
             }
             R.id.menuOptionMainExit -> {
-
+                postEvent(CommandHelper.COMMAND_EXIT)
             }
             android.R.id.home -> {
                 onBackPressed()
@@ -172,8 +166,8 @@ class MainActivity : BaseActivity() {
                 durationLong = Long.MIN_VALUE
             }
             holder.durationText.text = TimeHelper.getDurationStr(durationLong,this@MainActivity)
-            holder.info.text = videoBean.folderName
-            holder.createTime.text = videoBean.videoPath
+            holder.info.text = "${videoBean.videoWidth}×${videoBean.videoHeight}"
+            holder.createTime.text = "${NumberHelper.getFileSizeFromB_MB(videoBean.size)}MB"
             //获取图片
             holder.preview.setImageResource(R.drawable.ic_local_movies_black_24dp)
             holder.loadImage(videoBean.videoPath)

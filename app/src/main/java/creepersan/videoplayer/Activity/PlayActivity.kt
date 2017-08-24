@@ -32,6 +32,7 @@ class PlayActivity : BaseActivity(), SurfaceHolder.Callback, MediaPlayer.OnCompl
     object FLAG{
         val CURRENT_POS = "CurrentPos"
         val IS_FORCE_ROTATE = "isForceRotate"
+        val IS_LANDSCAPE = "isLandscape"
     }
 
     private var videoPath = ""
@@ -75,6 +76,7 @@ class PlayActivity : BaseActivity(), SurfaceHolder.Callback, MediaPlayer.OnCompl
     private val retryCountMax = 3
     private var saveTapTimeStamp = 0L
     private val doubleTapTimeSnap = 300
+    private var videoSize = "0MB"
 
     private val spannableStrCenterSmall = RelativeSizeSpan(0.5f)
     private val timeRefreshThread = ProgressBarRefreshThread()
@@ -92,6 +94,7 @@ class PlayActivity : BaseActivity(), SurfaceHolder.Callback, MediaPlayer.OnCompl
             outState.putInt(FLAG.CURRENT_POS,mediaPlayer.currentPosition)
         } catch (e: Exception) {
         }
+        outState.putBoolean(FLAG.IS_LANDSCAPE,isLandscape)
         outState.putBoolean(FLAG.IS_FORCE_ROTATE,isForceRotate)
         isExit = false
     }
@@ -155,6 +158,7 @@ class PlayActivity : BaseActivity(), SurfaceHolder.Callback, MediaPlayer.OnCompl
         if (bundle!=null){
             saveCurrentPosition = bundle.getInt(FLAG.CURRENT_POS,-1)
             isForceRotate = bundle.getBoolean(FLAG.IS_FORCE_ROTATE,false)
+            isLandscape = bundle.getBoolean(FLAG.IS_LANDSCAPE,true)
         }
     }
     private fun initSetting() {
@@ -209,6 +213,7 @@ class PlayActivity : BaseActivity(), SurfaceHolder.Callback, MediaPlayer.OnCompl
             videoPath = baseIntent.filePath
             videoName = baseIntent.videoBean.name
             folderBean = baseIntent.folderBean
+            videoSize = "${NumberHelper.getFileSizeFromB_MB(baseIntent.videoBean.size)}MB"
         }
     }
     private fun initAudioManager() {
@@ -245,7 +250,6 @@ class PlayActivity : BaseActivity(), SurfaceHolder.Callback, MediaPlayer.OnCompl
         timeRefreshThread.start()
     }
     private fun initScale() {
-//        log("initScale()!")
         val videoHeight = mediaPlayer.videoHeight.toFloat()
         val videoWidth = mediaPlayer.videoWidth.toFloat()
         val screenHeight = playTouchZone.height.toFloat()
@@ -303,7 +307,7 @@ class PlayActivity : BaseActivity(), SurfaceHolder.Callback, MediaPlayer.OnCompl
         playButtonPlay.setOnClickListener{ playOrResume() }
         playButtonPrevious.setOnClickListener { playPrevious() }
         playButtonNext.setOnClickListener { playNext() }
-        playButtonFullscreen.setOnClickListener { playFullscreen() }
+        playButtonRotate.setOnClickListener { playRotateScreen() }
         playButtonLock.setOnClickListener { playLockScreen() }
         playUnlockZone.setOnClickListener {//解锁按下了
             isLockScreen = false
@@ -377,9 +381,13 @@ class PlayActivity : BaseActivity(), SurfaceHolder.Callback, MediaPlayer.OnCompl
         return true
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if(isPlayerReady){
+            pauseVideo()
+        }
         when(item.itemId){
-            android.R.id.home -> finish()
-            R.id.menuOptionPlaySetting -> startActivity(SettingActivity::class.java)
+            android.R.id.home -> { finish() }
+            R.id.menuOptionPlaySetting -> { startActivity(SettingActivity::class.java) }
+            R.id.menuOptionPlayVideoInfo -> { makeVideoInfoDialog() }
         }
         return super.onOptionsItemSelected(item)
     }
@@ -437,6 +445,22 @@ class PlayActivity : BaseActivity(), SurfaceHolder.Callback, MediaPlayer.OnCompl
         builder.setTitle(getString(titleResId))
         builder.setMessage(getString(contentResId))
         builder.setPositiveButton(R.string.playDialogDefaultPositiveText,null)
+        builder.show()
+    }
+    private fun makeVideoInfoDialog(){
+        if (!File(videoPath).exists()) return
+        val builder = android.app.AlertDialog.Builder(this)
+        builder.setTitle(videoName)
+        if (isPlayerReady){
+            builder.setMessage("${getString(R.string.playDialogVideoName)} : ${videoName}\n" +
+                    "${getString(R.string.playDialogVideoDuration)} : ${TimeHelper.getDurationStr(mediaPlayer.duration.toLong(),this)}\n" +
+                    "${getString(R.string.playDialogVideoWidth)} : ${mediaPlayer.videoWidth}\n" +
+                    "${getString(R.string.playDialogVideoHeight)} : ${mediaPlayer.videoHeight}\n" +
+                    "${getString(R.string.playDialogVideoSize)} : ${videoSize}\n" +
+                    "${getString(R.string.playDialogVideoPath)} : ${videoPath}")
+        }else{
+            builder.setMessage(R.string.playDialogPlayerNotReady)
+        }
         builder.show()
     }
 
@@ -582,7 +606,7 @@ class PlayActivity : BaseActivity(), SurfaceHolder.Callback, MediaPlayer.OnCompl
         showPlayerControlUIVisibility(View.GONE)
         showUnlockZoneVisibility(View.VISIBLE)
     }
-    private fun playFullscreen(){
+    private fun playRotateScreen(){
         isForceRotate = true
         if (isLandscape){
             isLandscape = false
@@ -863,27 +887,47 @@ class PlayActivity : BaseActivity(), SurfaceHolder.Callback, MediaPlayer.OnCompl
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onSettingAlwaysOnInfoEvent(event:SettingAlwaysOnInfoEvent){
-        isAlwaysOnInfo
+        if (event.newStatus){
+            if (!isRegisterReceiver){
+                val intentFilter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
+                registerReceiver(batteryReceiver,intentFilter)
+                isRegisterReceiver = true
+                showAlwaysOnInfoVisibility(View.VISIBLE)
+            }
+        }else{
+            if (isRegisterReceiver){
+                if (isRegisterReceiver){
+                    isRegisterReceiver = false
+                    unregisterReceiver(batteryReceiver)
+                    showAlwaysOnInfoVisibility(View.GONE)
+                }
+            }
+        }
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onSettingAlwaysOnProgressEvent(event:SettingAlwaysOnProgressEvent){
-
+        if (event.newStatus){
+            showAlwaysOnInfoVisibility(View.VISIBLE)
+        }else{
+            showAlwaysOnProgressVisibility(View.GONE)
+        }
+        isAlwaysOnProgress = event.newStatus
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onSettingGestureDoubleTapEvent(event:SettingGestureDoubleTapEvent){
-
+        isDoubleTapGesture = event.newStatus
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onSettingGestureProgressEvent(event:SettingGestureProgressEvent){
-
+        isProgressGesture = event.newStatus
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onSettingGestureVolumeEvent(event:SettingGestureVolumeEvent){
-
+        isVolumeGesture = event.newStatus
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onSettingGestureBrightnessEvent(event:SettingGestureBrightnessEvent){
-
+        isBrightnessGesture = event.newStatus
     }
 
 
