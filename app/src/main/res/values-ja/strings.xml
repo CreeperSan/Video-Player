@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">ビデオプレーヤー</string>
 
+    <string name="mainDialogRequestPermissionTitle">请求权限</string>
+    <string name="mainDialogRequestPermissionContent">デバイス上のビデオをスキャンするための許可が必要です。</string>
+    <string name="mainDialogRequestPermissionPositive">はい</string>
+    <string name="mainDialogRequestPermissionNegative">いいえ</string>
+
     <string name="menuOptionMainRefresh">更新</string>
     <string name="menuOptionMainSetting">設定</string>
     <string name="menuOptionMainAbout">について</string>

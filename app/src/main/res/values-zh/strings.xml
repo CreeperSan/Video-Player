@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">视频播放器</string>
 
+    <string name="mainDialogRequestPermissionTitle">请求权限</string>
+    <string name="mainDialogRequestPermissionContent">我们需要你的许可来扫描设备上的视频。</string>
+    <string name="mainDialogRequestPermissionPositive">确认</string>
+    <string name="mainDialogRequestPermissionNegative">退出</string>
+
     <string name="menuOptionMainRefresh">刷新</string>
     <string name="menuOptionMainSetting">设置</string>
     <string name="menuOptionMainAbout">关于</string>

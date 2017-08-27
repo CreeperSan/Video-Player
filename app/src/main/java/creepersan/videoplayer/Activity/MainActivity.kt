@@ -1,11 +1,18 @@
 package creepersan.videoplayer.Activity
 
+import android.Manifest
+import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.media.ThumbnailUtils
 import android.os.Bundle
 import android.provider.MediaStore
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.ActionBar
+import android.support.v7.app.AlertDialog
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.LruCache
@@ -25,6 +32,8 @@ import java.util.*
 
 
 class MainActivity : BaseActivity() {
+    private val REQUEST_CODE = 1
+
     private var isHome = true;
 
     private lateinit var folderAdapter:FolderAdapter
@@ -44,14 +53,21 @@ class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initService()
         initActionBar();
-        initList()
-        initData()
-        initSwipeRefreshLayout();
+        initPermission()
     }
 
-    private fun initService() {
+    private fun initPermission() {
+        if (ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ){
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),REQUEST_CODE)
+        }else{
+            initLater()
+        }
+    }
+    private fun initLater(){
+        initList()
+        initData()
+        initSwipeRefreshLayout()
     }
     private fun initActionBar(){
         if (supportActionBar != null){
@@ -107,6 +123,23 @@ class MainActivity : BaseActivity() {
             actionBar.setDisplayHomeAsUpEnabled(false)
             mainRecyclerView.adapter = folderAdapter
             setTitle(R.string.app_name)
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_CODE){
+            if (grantResults[0] != PackageManager.PERMISSION_GRANTED){
+                val builder = AlertDialog.Builder(this)
+                builder.setTitle(R.string.mainDialogRequestPermissionTitle)
+                builder.setMessage(R.string.mainDialogRequestPermissionContent)
+                builder.setPositiveButton(R.string.mainDialogRequestPermissionPositive) { p0, p1 -> initPermission() }
+                builder.setNegativeButton(R.string.mainDialogRequestPermissionNegative,{ p0,p1 -> finish() })
+                builder.setCancelable(false)
+                builder.show()
+            }else {
+                initLater()
+            }
         }
     }
 

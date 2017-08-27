@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">Video Player</string>
 
+    <string name="mainDialogRequestPermissionTitle">Request Permission</string>
+    <string name="mainDialogRequestPermissionContent">We need your access to load the video on your device.</string>
+    <string name="mainDialogRequestPermissionPositive">Commit</string>
+    <string name="mainDialogRequestPermissionNegative">Exit</string>
+
     <string name="menuOptionMainRefresh">Refresh</string>
     <string name="menuOptionMainSetting">Setting</string>
     <string name="menuOptionMainAbout">About</string>
